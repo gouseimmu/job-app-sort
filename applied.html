@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Database</title>
+    <link rel="stylesheet" href="commonStyles.css" />
+  </head>
+
+  <body>
+    <div id="links">
+      <div><a href="index.html">Home</a></div>
+      <div><a href="applied.html">Applied Jobs</a></div>
+      <div><a href="bookmark.html">Bookmarks</a></div>
+    </div>
+    <select  id="sortnames"  >
+      <option >Sort By Name</option>
+      <option value="asc">Ascending</option>
+    <option value="dsc">Descending</option>
+  </select>
+
+  <select  id="sortsalary">
+    <option value="">sort by salary</option>
+    <option value="HTL">High to low</option>
+    <option value="LTH">Low to high</option>
+  </select>
+  <select name="" id="filterrole">
+    <option value="">Filter by category</option>
+    <option value="FSD">FSD</option>
+    <option value="Frontend">FRONTEND</option>
+    <option value="Backend">BACKEND</option>
+  </select>
+
+    <main>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Job applied</th>
+            <th>Salary expected (LPA)</th>
+            <th>Add to bookmark</th>
+          </tr>
+        </thead>
+        <tbody id="body">
+
+          <!-- Append your output to tbody -->
+        </tbody>
+      </table>
+    </main>
+  </body>
+  <script>
+    //you need to code here
+    var jobarr = JSON.parse(localStorage.getItem("joblist"));
+    displaydata(jobarr);
+    document.querySelector("#filterrole").addEventListener("change",sortrole)
+    function sortrole(){
+      var filtered=document.querySelector("#filterrole").value;
+      var list = jobarr.filter(function(ele){
+        return ele.personrole==filtered
+      })
+      displaydata(list)
+
+    }
+    document.querySelector("#sortsalary").addEventListener("change",salarysort)
+    function salarysort(){
+      var selected =document.querySelector("#sortsalary").value;
+      if(selected=="HTL")
+      {
+        jobarr.sort(function(a,b){
+          return b.personsalary-a.personsalary
+        })
+        displaydata(jobarr)
+      }
+      if(selected=="LTH")
+      {
+        jobarr.sort(function(a,b){
+          return a.personsalary-b.personsalary
+        })
+        displaydata(jobarr)
+      } 
+    }
+     document.querySelector("#sortnames").addEventListener("change",namesort)
+     function namesort(){
+       var selected =document.querySelector("#sortnames").value
+       console.log(selected)
+       if (selected=="asc")
+       {
+         jobarr.sort(function(a,b){
+           var x = a.personname.toUpperCase();
+           var y = b.personname.toUpperCase();
+           if(x>y)
+           {
+             return 1
+           }
+           if(x<y)
+           {
+             return -1
+           }
+            
+             return 0
+           
+         });
+         console.log(jobarr)
+         displaydata(jobarr)
+       }
+       if (selected=="dsc")
+       {
+         jobarr.sort(function(a,b){
+           var x=a.personname.toUpperCase();
+           var y =b.personname.toUpperCase();
+           if(x>y){
+             return -1
+           }
+           if(x<y)
+           {
+             return 1
+           }
+           return 0
+         });
+         console.log(jobarr)
+         displaydata(jobarr);
+       }
+     }
+
+    var bookmarkarr=JSON.parse(localStorage.getItem("bookmarks")) || [];
+
+    function displaydata(jobarr){
+      document.querySelector("tbody").innerHTML="";
+      jobarr.forEach(function(ele){
+        var tr =document.createElement("tr");
+        var td1=document.createElement("td")
+        td1.innerText=ele.personname;
+
+        var td2=document.createElement("td");
+        td2.innerText=ele.personemail;
+
+        var td3= document.createElement("td");
+        td3.innerText=ele.personrole;
+
+        var td4=document.createElement("td");
+        td4.innerText=ele.personsalary;
+
+        var td5=document.createElement("td");
+        td5.innerText="Bookmark";
+        td5.style.color="blue";
+        td5.style.cursor="pointer"
+        td5.addEventListener("click", function(){
+          bookmarkfun(ele);
+        });
+        tr.append(td1,td2,td3,td4,td5);
+        document.querySelector("tbody").append(tr);
+      });
+    }
+
+    function bookmarkfun(ele){
+      console.log(ele)
+      bookmarkarr.push(ele);
+      localStorage.setItem("bookmarks",JSON.stringify(bookmarkarr))
+    }
+     
+
+  </script>
+</html>
